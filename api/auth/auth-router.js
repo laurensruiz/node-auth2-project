@@ -3,6 +3,7 @@ const { checkUsernameExists, validateRoleName } = require('./auth-middleware');
 const { JWT_SECRET } = require("../secrets"); // use this secret!
 const User = require('../users/users-model')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 router.post("/register", validateRoleName, (req, res, next) => {
   /**
@@ -49,6 +50,36 @@ router.post("/login", checkUsernameExists, (req, res, next) => {
       "role_name": "admin" // the role of the authenticated user
     }
    */
+  
+  if(bcrypt.compareSync(req.body.password, req.user.password)){
+    //make it so cookie is set on client and server stores a session with session id
+    const token = buildToken(req.user)
+    next({
+      status: 200,
+      message: `Welcome ${req.user.username}`,
+      token
+    })
+  } else{
+    //this invalid is refering to password, the middleware refers to username
+    next({
+      status: 401,
+      message: 'Invalid credentials'
+    })
+  }
 });
+
+//need a helper
+function buildToken(user){
+  const payload = {
+    subject: user.user_id,
+    role_name: user.role_name,
+    username: user.username,
+  }
+  const options = {
+    expiresIn: '1d',
+  }
+
+  return jwt.sign(payload, JWT_SECRET, options)
+}
 
 module.exports = router;
