@@ -26,6 +26,7 @@ function find() {
 
 function findBy(filter) {
   /**
+   * // ALL not one thats why no first
     You will need to join two tables.
     Resolves to an ARRAY with all users that match the filter condition.
 
@@ -46,6 +47,7 @@ function findBy(filter) {
 
 function findById(user_id) {
   /**
+   // only ONE thats why we need first
     You will need to join two tables.
     Resolves to the user with the given user_id.
 
@@ -59,6 +61,7 @@ function findById(user_id) {
     .join('roles', 'users.role_id', 'roles.role_id')
     .select('user_id', 'username', 'role_name')
     .where('users.user_id', user_id)
+    .first()
 }
 
 /**
