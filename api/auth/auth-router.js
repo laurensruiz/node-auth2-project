@@ -54,11 +54,11 @@ router.post("/login", checkUsernameExists, (req, res, next) => {
   if(bcrypt.compareSync(req.body.password, req.user.password)){
     //make it so cookie is set on client and server stores a session with session id
     const token = buildToken(req.user)
-    next({
-      status: 200,
-      message: `Welcome ${req.user.username}`,
-      token
-    })
+    //when I used next the token did not appear!
+    res.json({
+        message: `${req.user.username} is back!`,
+        token
+      })
   } else{
     //this invalid is refering to password, the middleware refers to username
     next({
